@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.mod/config"
 	"io"
@@ -38,6 +39,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		expected := hex.EncodeToString(h.Sum(nil))
 
+		fmt.Println(expected)
 		if digest != expected {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid digest"})
 			ctx.Abort()

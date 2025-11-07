@@ -25,8 +25,8 @@ func (s *WalletService) TopUp(id uint, amount float64) error {
 		return errors.New("wallet not found")
 	}
 
-	limit := 10000.0
-	if wallet.Type == "undefined" {
+	limit := 100000.0
+	if wallet.Type == "unidentified" {
 		limit = 10000.0
 	}
 
