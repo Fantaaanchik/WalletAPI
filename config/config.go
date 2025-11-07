@@ -2,38 +2,42 @@ package config
 
 import (
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
-	"os"
 )
 
 var (
 	DB        *gorm.DB
-	SecretKey string
+	SecretKey = "superSecretKey"
 )
 
-func Init() {
+func ConnectDB() (*gorm.DB, error) {
+	// Загружаем .env (только если локальный запуск)
 	if err := godotenv.Load(); err != nil {
-		log.Println(".env file not found, using system env")
+		log.Println(" .env file not found, using system environment variables")
 	}
 
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+
 	dsn := fmt.Sprintf(
-		"host =%s user=%s password=@%s dbname=%s port=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PORT"),
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Dushanbe",
+		host, user, password, dbname, port,
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err.Error())
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
 	DB = db
-	SecretKey = os.Getenv("SECRET_KEY")
-	log.Println("Successfully connected to database")
+
+	return db, nil
 }

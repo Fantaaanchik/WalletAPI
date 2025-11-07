@@ -9,7 +9,10 @@ import (
 )
 
 func main() {
-	config.Init()
+	_, err := config.ConnectDB()
+	if err != nil {
+		return
+	}
 	if err := config.DB.AutoMigrate(&models.User{}, &models.Wallet{}, &models.Transaction{}); err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}

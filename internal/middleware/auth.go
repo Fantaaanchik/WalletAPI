@@ -36,8 +36,6 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		h := hmac.New(sha1.New, []byte(config.SecretKey))
 
-		h.Write(body)
-
 		expected := hex.EncodeToString(h.Sum(nil))
 
 		if digest != expected {
